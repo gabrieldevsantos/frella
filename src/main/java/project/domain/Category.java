@@ -4,7 +4,7 @@ package project.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "CATEGORY_SERVICE")
+@Table(name = "category_service")
 public class Category {
 
     private static final long serialVersionUID = 1L;

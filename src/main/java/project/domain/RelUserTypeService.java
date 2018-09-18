@@ -3,7 +3,7 @@ package project.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "REL_USER_TYPESERVICE")
+@Table(name = "rel_user_typeservice")
 public class RelUserTypeService {
 
     @Id

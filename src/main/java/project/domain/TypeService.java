@@ -3,7 +3,7 @@ package project.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SERVICE_TYPE")
+@Table(name = "service_type")
 public class TypeService {
 
     @Id
