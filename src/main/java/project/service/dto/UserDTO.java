@@ -1,15 +1,15 @@
 package project.service.dto;
 
 import project.config.Constants;
-
 import project.domain.Authority;
+import project.domain.RelUserTypeService;
 import project.domain.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
-import javax.validation.constraints.*;
-import java.time.Instant;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,20 +38,22 @@ public class UserDTO {
     @Size(max = 256)
     private String imageUrl;
 
-    private boolean activated = false;
+    private boolean activated = true;
 
     @Size(min = 2, max = 6)
     private String langKey;
 
-    private String createdBy;
-
-    private Instant createdDate;
-
-    private String lastModifiedBy;
-
-    private Instant lastModifiedDate;
-
     private Set<String> authorities;
+
+    private String details;
+
+    private String description;
+
+    private String scholarity;
+
+    private String cellphone;
+
+    private List<RelUserTypeService> typeService;
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -65,11 +67,11 @@ public class UserDTO {
         this.email = user.getEmail();
         this.activated = user.getActivated();
         this.imageUrl = user.getImageUrl();
-        this.langKey = user.getLangKey();
-        this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
-        this.lastModifiedBy = user.getLastModifiedBy();
-        this.lastModifiedDate = user.getLastModifiedDate();
+        this.details = user.getDetails();
+        this.description = user.getDescription();
+        this.scholarity = user.getScholarity();
+        this.cellphone = user.getCellphone();
+
         this.authorities = user.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
@@ -139,44 +141,52 @@ public class UserDTO {
         this.langKey = langKey;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Instant lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
     public Set<String> getAuthorities() {
         return authorities;
     }
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getScholarity() {
+        return scholarity;
+    }
+
+    public void setScholarity(String scholarity) {
+        this.scholarity = scholarity;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
+    public List<RelUserTypeService> getTypeService() {
+        return typeService;
+    }
+
+    public void setTypeService(List<RelUserTypeService> typeService) {
+        this.typeService = typeService;
     }
 
     @Override
@@ -189,10 +199,6 @@ public class UserDTO {
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
-            ", createdBy=" + createdBy +
-            ", createdDate=" + createdDate +
-            ", lastModifiedBy='" + lastModifiedBy + '\'' +
-            ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
             "}";
     }

@@ -1,10 +1,5 @@
 package project.web.rest;
 
-import project.FrellaApp;
-import project.config.audit.AuditEventConverter;
-import project.domain.PersistentAuditEvent;
-import project.repository.PersistenceAuditEventRepository;
-import project.service.AuditEventService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import project.FrellaApp;
+import project.config.audit.AuditEventConverter;
+import project.domain.PersistentAuditEvent;
+import project.repository.PersistenceAuditEventRepository;
+import project.service.impl.AuditEventService;
 
 import java.time.Instant;
 

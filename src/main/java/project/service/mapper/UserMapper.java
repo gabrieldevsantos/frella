@@ -1,12 +1,13 @@
 package project.service.mapper;
 
+import org.springframework.stereotype.Service;
 import project.domain.Authority;
 import project.domain.User;
 import project.service.dto.UserDTO;
 
-import org.springframework.stereotype.Service;
-
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,6 @@ public class UserMapper {
             user.setEmail(userDTO.getEmail());
             user.setImageUrl(userDTO.getImageUrl());
             user.setActivated(userDTO.isActivated());
-            user.setLangKey(userDTO.getLangKey());
             Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
             if (authorities != null) {
                 user.setAuthorities(authorities);

@@ -1,9 +1,5 @@
 package project.security;
 
-import project.FrellaApp;
-import project.domain.User;
-import project.repository.UserRepository;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import project.FrellaApp;
+import project.domain.User;
+import project.repository.UserRepository;
 
 import java.util.Locale;
 
@@ -56,7 +55,6 @@ public class DomainUserDetailsServiceIntTest {
         userOne.setEmail(USER_ONE_EMAIL);
         userOne.setFirstName("userOne");
         userOne.setLastName("doe");
-        userOne.setLangKey("en");
         userRepository.save(userOne);
 
         userTwo = new User();
@@ -66,7 +64,6 @@ public class DomainUserDetailsServiceIntTest {
         userTwo.setEmail(USER_TWO_EMAIL);
         userTwo.setFirstName("userTwo");
         userTwo.setLastName("doe");
-        userTwo.setLangKey("en");
         userRepository.save(userTwo);
 
         userThree = new User();
@@ -76,7 +73,6 @@ public class DomainUserDetailsServiceIntTest {
         userThree.setEmail(USER_THREE_EMAIL);
         userThree.setFirstName("userThree");
         userThree.setLastName("doe");
-        userThree.setLangKey("en");
         userRepository.save(userThree);
     }
 

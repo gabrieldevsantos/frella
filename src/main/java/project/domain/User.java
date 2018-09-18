@@ -1,24 +1,20 @@
 package project.domain;
 
-import project.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import javax.validation.constraints.Email;
+import project.config.Constants;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
 import java.time.Instant;
+import java.util.*;
 
 /**
  * A user.
@@ -61,11 +57,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @NotNull
     @Column(nullable = false)
-    private boolean activated = false;
-
-    @Size(min = 2, max = 6)
-    @Column(name = "lang_key", length = 6)
-    private String langKey;
+    private boolean activated = true;
 
     @Size(max = 256)
     @Column(name = "image_url", length = 256)
@@ -83,6 +75,25 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    @Column(name = "DETAILS")
+    private String details;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "SCHOLARITY")
+    private String scholarity;
+
+    @Column(name = "CELLPHONE")
+    private String cellphone;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "REL_USER_TYPESERVICE",
+        joinColumns = {@JoinColumn(name = "ID_USER")},
+        inverseJoinColumns = {@JoinColumn(name = "ID_TYPE_SERVICE")})
+    private List<RelUserTypeService> typeServices = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
@@ -183,20 +194,52 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.resetDate = resetDate;
     }
 
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
-    }
-
     public Set<Authority> getAuthorities() {
         return authorities;
     }
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getScholarity() {
+        return scholarity;
+    }
+
+    public void setScholarity(String scholarity) {
+        this.scholarity = scholarity;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
+    public List<RelUserTypeService> getTypeServices() {
+        return typeServices;
+    }
+
+    public void setTypeServices(List<RelUserTypeService> typeServices) {
+        this.typeServices = typeServices;
     }
 
     @Override
@@ -226,7 +269,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated='" + activated + '\'' +
-            ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
             "}";
     }

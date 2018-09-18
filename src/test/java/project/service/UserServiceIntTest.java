@@ -1,12 +1,5 @@
 package project.service;
 
-import project.FrellaApp;
-import project.config.Constants;
-import project.domain.User;
-import project.repository.UserRepository;
-import project.service.dto.UserDTO;
-import project.service.util.RandomUtil;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +13,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import project.FrellaApp;
+import project.config.Constants;
+import project.domain.User;
+import project.repository.UserRepository;
+import project.service.dto.UserDTO;
+import project.service.impl.UserService;
+import project.service.util.RandomUtil;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +64,6 @@ public class UserServiceIntTest {
         user.setFirstName("john");
         user.setLastName("doe");
         user.setImageUrl("http://placehold.it/50x50");
-        user.setLangKey("en");
 
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
         auditingHandler.setDateTimeProvider(dateTimeProvider);

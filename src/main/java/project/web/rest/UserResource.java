@@ -1,20 +1,7 @@
 package project.web.rest;
 
-import project.config.Constants;
 import com.codahale.metrics.annotation.Timed;
-import project.domain.User;
-import project.repository.UserRepository;
-import project.security.AuthoritiesConstants;
-import project.service.MailService;
-import project.service.UserService;
-import project.service.dto.UserDTO;
-import project.web.rest.errors.BadRequestAlertException;
-import project.web.rest.errors.EmailAlreadyUsedException;
-import project.web.rest.errors.LoginAlreadyUsedException;
-import project.web.rest.util.HeaderUtil;
-import project.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,11 +11,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import project.config.Constants;
+import project.domain.User;
+import project.repository.UserRepository;
+import project.security.AuthoritiesConstants;
+import project.service.dto.UserDTO;
+import project.service.impl.MailService;
+import project.service.impl.UserService;
+import project.web.rest.errors.BadRequestAlertException;
+import project.web.rest.errors.EmailAlreadyUsedException;
+import project.web.rest.errors.LoginAlreadyUsedException;
+import project.web.rest.util.HeaderUtil;
+import project.web.rest.util.PaginationUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing users.
@@ -142,7 +142,6 @@ public class UserResource {
      */
     @GetMapping("/users")
     @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
@@ -188,4 +187,5 @@ public class UserResource {
         userService.deleteUser(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
     }
+
 }

@@ -1,14 +1,4 @@
-package project.service;
-
-import project.domain.Authority;
-import project.domain.User;
-import project.repository.AuthorityRepository;
-import project.config.Constants;
-import project.repository.UserRepository;
-import project.security.AuthoritiesConstants;
-import project.security.SecurityUtils;
-import project.service.util.RandomUtil;
-import project.service.dto.UserDTO;
+package project.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import project.web.rest.errors.InvalidPasswordException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.config.Constants;
+import project.domain.Authority;
+import project.domain.User;
+import project.repository.AuthorityRepository;
+import project.repository.UserRepository;
+import project.security.AuthoritiesConstants;
+import project.security.SecurityUtils;
+import project.service.dto.UserDTO;
+import project.service.util.RandomUtil;
+import project.web.rest.errors.InvalidPasswordException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -99,19 +98,35 @@ public class UserService {
         newUser.setLastName(userDTO.getLastName());
         newUser.setEmail(userDTO.getEmail());
         newUser.setImageUrl(userDTO.getImageUrl());
-        newUser.setLangKey(userDTO.getLangKey());
-        // new user is not active
-        newUser.setActivated(false);
+        newUser.setActivated(Boolean.TRUE);
+
+        newUser.setDescription(userDTO.getDescription());
+        newUser.setDetails(userDTO.getDetails());
+        newUser.setScholarity(userDTO.getScholarity());
+        newUser.setCellphone(userDTO.getCellphone());
+
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
+
+        newUser.setTypeServices(new ArrayList<>());
+        userDTO.getTypeService().forEach(p -> newUser.getTypeServices().add(p));
+
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
+
+        newUser.getTypeServices().forEach(p -> {
+            p.setUserId(newUser.getId());
+        });
+
+
+
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
+
 
     public User createUser(UserDTO userDTO) {
         User user = new User();
@@ -120,11 +135,6 @@ public class UserService {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setImageUrl(userDTO.getImageUrl());
-        if (userDTO.getLangKey() == null) {
-            user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
-        } else {
-            user.setLangKey(userDTO.getLangKey());
-        }
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO.getAuthorities().stream()
                 .map(authorityRepository::findById)
@@ -160,7 +170,6 @@ public class UserService {
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
                 user.setEmail(email);
-                user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
@@ -186,7 +195,6 @@ public class UserService {
                 user.setEmail(userDTO.getEmail());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
-                user.setLangKey(userDTO.getLangKey());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO.getAuthorities().stream()
@@ -264,6 +272,10 @@ public class UserService {
      */
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
     }
 
     private void clearUserCaches(User user) {

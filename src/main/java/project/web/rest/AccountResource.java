@@ -1,27 +1,27 @@
 package project.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-
-import project.domain.User;
-import project.repository.UserRepository;
-import project.security.SecurityUtils;
-import project.service.MailService;
-import project.service.UserService;
-import project.service.dto.UserDTO;
-import project.web.rest.errors.*;
-import project.web.rest.vm.KeyAndPasswordVM;
-import project.web.rest.vm.ManagedUserVM;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import project.domain.User;
+import project.repository.UserRepository;
+import project.security.SecurityUtils;
+import project.service.dto.PasswordChangeDTO;
+import project.service.dto.UserDTO;
+import project.service.impl.UserService;
+import project.web.rest.errors.EmailAlreadyUsedException;
+import project.web.rest.errors.InternalServerErrorException;
+import project.web.rest.errors.InvalidPasswordException;
+import project.web.rest.errors.LoginAlreadyUsedException;
+import project.web.rest.vm.KeyAndPasswordVM;
+import project.web.rest.vm.ManagedUserVM;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import project.service.dto.PasswordChangeDTO;
-import java.util.*;
+import java.util.Optional;
 
 /**
  * REST controller for managing the current user's account.
@@ -36,13 +36,10 @@ public class AccountResource {
 
     private final UserService userService;
 
-    private final MailService mailService;
-
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    public AccountResource(UserRepository userRepository, UserService userService) {
 
         this.userRepository = userRepository;
         this.userService = userService;
-        this.mailService = mailService;
     }
 
     /**
@@ -56,15 +53,16 @@ public class AccountResource {
     @PostMapping("/register")
     @Timed
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+    public void registerAccountUser(@Valid @RequestBody ManagedUserVM managedUserVM) {
         if (!checkPasswordLength(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
         userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
         userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
     }
+
+
 
     /**
      * GET  /activate : activate the registered user.
@@ -146,20 +144,20 @@ public class AccountResource {
         userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
    }
 
-    /**
-     * POST   /account/reset-password/init : Send an email to reset the password of the user
-     *
-     * @param mail the mail of the user
-     * @throws EmailNotFoundException 400 (Bad Request) if the email address is not registered
-     */
-    @PostMapping(path = "/account/reset-password/init")
-    @Timed
-    public void requestPasswordReset(@RequestBody String mail) {
-       mailService.sendPasswordResetMail(
-           userService.requestPasswordReset(mail)
-               .orElseThrow(EmailNotFoundException::new)
-       );
-    }
+//    /**
+//     * POST   /account/reset-password/init : Send an email to reset the password of the user
+//     *
+//     * @param mail the mail of the user
+//     * @throws EmailNotFoundException 400 (Bad Request) if the email address is not registered
+//     */
+//    @PostMapping(path = "/account/reset-password/init")
+//    @Timed
+//    public void requestPasswordReset(@RequestBody String mail) {
+//       mailService.sendPasswordResetMail(
+//           userService.requestPasswordReset(mail)
+//               .orElseThrow(EmailNotFoundException::new)
+//       );
+//    }
 
     /**
      * POST   /account/reset-password/finish : Finish to reset the password of the user
